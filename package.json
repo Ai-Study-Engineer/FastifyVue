@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "ts-node backend/server.ts"
+    "dev": "npx ts-node-dev --respawn --transpile-only backend/server.ts"
   },
   "repository": {
     "type": "git",
