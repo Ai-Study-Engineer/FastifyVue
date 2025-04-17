@@ -12,10 +12,10 @@
     <div id="app">
         <div v-if="currentQuestion">
             <h2>{{ currentQuestion.title }}</h2>
-          </div>
-          
-          <button @click="prevQuestion" :disabled="index === 0">前へ</button>
-          <button @click="nextQuestion" :disabled="index === questions.length - 1">次へ</button>
+        </div>
+
+        <button @click="prevQuestion" :disabled="index === 0">前へ</button>
+        <button @click="nextQuestion" :disabled="index === questions.length - 1">次へ</button>
         <div>
             <h3>元テーブル</h3>
             <table border="1">
@@ -51,16 +51,19 @@
                 </tbody>
             </table>
         </div>
-        <p>解答</p>
-        <div v-if="currentAnswer">
-            <pre>{{ currentAnswer.query }}</pre>
+        <div>
+            <button @click="checkAnswerCorrectness">正解かどうか</button>
+            <p v-if="isCorrect === null">まだ解答していません</p>
+            <div v-else>
+                <p>解答例</p>
+                <div v-if="currentAnswer">
+                    <pre>{{ currentAnswer.query }}</pre>
+                </div>
+                <p v-if="isCorrect === true" style="color: green;">✅ 正解です！</p>
+                <p v-else-if="isCorrect === false" style="color: red;">❌ 不正解です</p>
+            </div>
         </div>
-        <div v-if="isCorrect">
-            <p>正解です！</p>            
-        </div>
-        <div v-else>
-            <p>不正解です。もう一度挑戦してください。</p>
-        </div>
+
 
     </div>
     <script type="module" src="/main.js"></script>

@@ -12,7 +12,7 @@ createApp({
       allRows: [],
       allColumns: [],
       index: 0,
-      isCorrect: false,
+      isCorrect: null,
     };
   },
 
@@ -60,9 +60,7 @@ createApp({
 
         const data = await res.json();
         this.result = data.rows || [];
-        this.columns = data.columns || [];
-
-        this.isCorrect = this.checkAnswerCorrectness();
+        this.columns = data.columns || [];        
 
       } catch (err) {
         alert('SQL実行エラー');
@@ -70,7 +68,7 @@ createApp({
     },
 
     checkAnswerCorrectness() {
-      return arraysOfObjectsEqual(this.result, this.allRows);
+      this.isCorrect = arraysOfObjectsEqual(this.result, this.allRows);
     },
 
     prevQuestion() {
