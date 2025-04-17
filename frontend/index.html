@@ -12,7 +12,6 @@
     <div id="app">
         <div v-if="currentQuestion">
             <h2>{{ currentQuestion.title }}</h2>
-            <pre>{{ currentQuestion.query }}</pre>
           </div>
           
           <button @click="prevQuestion" :disabled="index === 0">前へ</button>
@@ -51,6 +50,11 @@
                     </tr>
                 </tbody>
             </table>
+        </div>
+        <p>解答</p>
+        <div v-if="currentAnswer">
+            <p>正解のSQL</p>
+            <pre>{{ currentAnswer.query }}</pre>
         </div>
     </div>
     <script src="./main.js"></script>

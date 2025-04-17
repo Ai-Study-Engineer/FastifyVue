@@ -4,6 +4,7 @@ createApp({
   data() {
     return {
       questions: [],
+      answers: [],
       sql: '',
       result: [],
       columns: [],
@@ -15,6 +16,9 @@ createApp({
   computed: {
     currentQuestion() {
       return this.questions[this.index];
+    },
+    currentAnswer() {
+      return this.answers[this.index];
     },
   },
   methods: {
@@ -46,6 +50,13 @@ createApp({
       const questionsRes = await fetch('/api/questions');
       const questionsData = await questionsRes.json();
       this.questions = questionsData;
+      console.log(this.questions);
+
+      const answersRes = await fetch('/api/answers');
+      console.log(answersRes);
+      const answersData = await answersRes.json();
+      console.log(answersData);
+      this.answers = answersData;
   
       const tableRes = await fetch('/api/table');
       const tableData = await tableRes.json();

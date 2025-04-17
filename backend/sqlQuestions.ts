@@ -1,13 +1,11 @@
 export const questionList = [
     {
       id: 1,
-      title: "全てのユーザーを取得する",
-      query: "SELECT * FROM users;"
+      title: "全てのユーザーを取得する"
     },
     {
       id: 2,
-      title: "年齢が20以上のユーザーを取得する",
-      query: "SELECT * FROM users WHERE age >= 20;"
+      title: "年齢が20以上のユーザーを取得する"
     }
   ];
   

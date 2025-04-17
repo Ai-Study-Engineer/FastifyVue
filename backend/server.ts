@@ -2,6 +2,7 @@ import Fastify from 'fastify';
 import path from 'path';
 import fastifyStatic from '@fastify/static';
 import { questionList } from './sqlQuestions';
+import { answerList } from './sqlAnswers';
 import { db } from './utils/db';
 
 const fastify = Fastify({ logger: true });
@@ -13,6 +14,10 @@ fastify.register(fastifyStatic, {
 
 fastify.get('/api/questions', async () => {
   return questionList;
+});
+
+fastify.get('/api/answers', async () => {
+  return answerList;
 });
 
 fastify.post('/api/execute', async (request, reply) => {
