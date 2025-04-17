@@ -7,6 +7,8 @@ createApp({
       sql: '',
       result: [],
       columns: [],
+      allRows: [],
+      allColumns: []
     };
   },
   methods: {
@@ -27,11 +29,18 @@ createApp({
       }
     },
   },
-  mounted() {
-    fetch('/api/questions')
-      .then((res) => res.json())
-      .then((data) => {
-        this.questions = data;
-      });
-  },
+  async mounted() {
+    try {
+      const questionsRes = await fetch('/api/questions');
+      const questionsData = await questionsRes.json();
+      this.questions = questionsData;
+  
+      const tableRes = await fetch('/api/table');
+      const tableData = await tableRes.json();
+      this.allRows = tableData.allRows || [];
+      this.allColumns = tableData.allColumns || [];
+    } catch (error) {
+      console.error('Error loading data:', error);
+    }
+  }
 }).mount('#app');

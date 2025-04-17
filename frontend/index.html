@@ -16,6 +16,21 @@
                 <code>{{ q.query }}</code>
             </li>
         </ul>
+        <div>
+            <h3>元テーブル</h3>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th v-for="col in allColumns" :key="col">{{ col }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(row, idx) in allRows" :key="idx">
+                        <td v-for="col in allColumns" :key="col">{{ row[col] }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         <h2>SQLを実行する</h2>
         <textarea v-model="sql" rows="5" cols="60" placeholder="ここにSQLを入力"></textarea>
         <br />
