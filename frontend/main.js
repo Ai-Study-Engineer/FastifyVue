@@ -1,4 +1,5 @@
 const { createApp } = Vue;
+import {arraysOfObjectsEqual} from './utils/helpers.js';
 
 createApp({
   data() {
@@ -34,6 +35,8 @@ createApp({
 
         this.result = data.rows || [];
         this.columns = data.columns || [];
+        const isCorrect = arraysOfObjectsEqual(this.result, this.allRows);
+        console.log('isCorrect:', isCorrect);        
       } catch (err) {
         alert('SQL実行エラー');
       }
@@ -50,12 +53,9 @@ createApp({
       const questionsRes = await fetch('/api/questions');
       const questionsData = await questionsRes.json();
       this.questions = questionsData;
-      console.log(this.questions);
 
       const answersRes = await fetch('/api/answers');
-      console.log(answersRes);
       const answersData = await answersRes.json();
-      console.log(answersData);
       this.answers = answersData;
   
       const tableRes = await fetch('/api/table');
