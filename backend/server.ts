@@ -2,6 +2,7 @@ import Fastify from 'fastify';
 import path from 'path';
 import fastifyStatic from '@fastify/static';
 import { questionList } from './sqlQuestions';
+import { db } from './utils/db';
 
 const fastify = Fastify({ logger: true });
 
@@ -13,6 +14,20 @@ fastify.register(fastifyStatic, {
 fastify.get('/api/questions', async () => {
   return questionList;
 });
+
+fastify.post('/api/execute', async (request, reply) => {
+    try {
+      const { query } = request.body as { query: string };
+      const stmt = db.prepare(query);
+      const rows = stmt.all() as Record<string, any>[];
+  
+      const columns = rows.length > 0 ? Object.keys(rows[0]) : [];
+  
+      return { rows, columns };
+    } catch (err) {
+      reply.status(400).send({ error: String(err) });
+    }
+  });
 
 fastify.listen({ port: 3000 }, (err) => {
   if (err) throw err;

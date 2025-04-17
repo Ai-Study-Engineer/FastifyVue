@@ -1,20 +1,43 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <title>SQLクイズ</title>
     <script src="https://unpkg.com/vue@3"></script>
-  </head>
-  <body>
+</head>
+
+<body>
     <div id="app">
-      <h1>SQLの問題</h1>
-      <ul>
-        <li v-for="q in questions" :key="q.id">
-          <strong>{{ q.title }}</strong><br />
-          <code>{{ q.query }}</code>
-        </li>
-      </ul>
+        <h1>SQLの問題</h1>
+        <ul>
+            <li v-for="q in questions" :key="q.id">
+                <strong>{{ q.title }}</strong><br />
+                <code>{{ q.query }}</code>
+            </li>
+        </ul>
+        <h2>SQLを実行する</h2>
+        <textarea v-model="sql" rows="5" cols="60" placeholder="ここにSQLを入力"></textarea>
+        <br />
+        <button @click="executeSQL">実行</button>
+
+        <div v-if="result.length">
+            <h3>結果</h3>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th v-for="col in columns" :key="col">{{ col }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(row, idx) in result" :key="idx">
+                        <td v-for="col in columns" :key="col">{{ row[col] }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
     <script src="./main.js"></script>
-  </body>
+</body>
+
 </html>
