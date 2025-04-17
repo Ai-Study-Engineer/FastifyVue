@@ -8,8 +8,14 @@ createApp({
       result: [],
       columns: [],
       allRows: [],
-      allColumns: []
+      allColumns: [],
+      index: 0,
     };
+  },
+  computed: {
+    currentQuestion() {
+      return this.questions[this.index];
+    },
   },
   methods: {
     async executeSQL() {
@@ -27,6 +33,12 @@ createApp({
       } catch (err) {
         alert('SQL実行エラー');
       }
+    },
+    prevQuestion() {
+      if (this.index > 0) this.index--;
+    },
+    nextQuestion() {
+      if (this.index < this.questions.length - 1) this.index++;
     },
   },
   async mounted() {
