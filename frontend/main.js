@@ -13,6 +13,7 @@ createApp({
       allColumns: [],
       index: 0,
       isCorrect: null,
+      DB: "products",
     };
   },
 
@@ -37,7 +38,7 @@ createApp({
         const [questionsData, answersData, tableData] = await Promise.all([
           this.fetchJSON('/api/questions'),
           this.fetchJSON('/api/answers'),
-          this.fetchJSON('/api/table'),
+          this.fetchJSON(`/api/table/${this.DB}`),
         ]);
 
         this.questions = questionsData;

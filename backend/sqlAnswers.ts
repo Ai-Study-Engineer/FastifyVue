@@ -17,5 +17,15 @@ export const answerList = [
       { id: 1, name: "Alice", age: 25 },
       { id: 2, name: "Bob", age: 30 }
     ]  
+  },
+  {
+    id: 3,
+    query: "SELECT name FROM products;",
+    columns: ["id", "name"],
+    rows: [
+      { id: 1, name: "Product A"},
+      { id: 2, name: "Product B"},
+      { id: 3, name: "Product C"}
+    ]
   }
 ];

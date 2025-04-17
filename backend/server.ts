@@ -3,7 +3,7 @@ import path from 'path';
 import fastifyStatic from '@fastify/static';
 import { questionList } from './sqlQuestions';
 import { answerList } from './sqlAnswers';
-import { db } from './utils/db';
+import { userDB, productsDB } from './utils/db';
 
 const fastify = Fastify({ logger: true });
 
@@ -23,7 +23,7 @@ fastify.get('/api/answers', async () => {
 fastify.post('/api/execute', async (request, reply) => {
     try {
       const { query } = request.body as { query: string };
-      const stmt = db.prepare(query);
+      const stmt = productsDB.prepare(query);
       const rows = stmt.all() as Record<string, any>[];
   
       const columns = rows.length > 0 ? Object.keys(rows[0]) : [];
@@ -34,10 +34,11 @@ fastify.post('/api/execute', async (request, reply) => {
     }
   });
 
-fastify.get('/api/table', async (request, reply) => {
+fastify.get('/api/table/:DB', async (request, reply) => {
 try {
-    const query = "SELECT * FROM USERS;";
-    const stmt = db.prepare(query);
+    const { DB } = request.params as { DB: string };    
+    const query = `SELECT * FROM ${DB};`;
+    const stmt = productsDB.prepare(query);
     const allRows = stmt.all() as Record<string, any>[];
 
     const allColumns = allRows.length > 0 ? Object.keys(allRows[0]) : [];
