@@ -1,5 +1,5 @@
 const { createApp } = Vue;
-import {arraysOfObjectsEqual} from './utils/helpers.js';
+import { arraysOfObjectsEqual } from './utils/helpers.js';
 
 createApp({
   data() {
@@ -12,8 +12,10 @@ createApp({
       allRows: [],
       allColumns: [],
       index: 0,
+      isCorrect: false,
     };
   },
+
   computed: {
     currentQuestion() {
       return this.questions[this.index];
@@ -22,7 +24,32 @@ createApp({
       return this.answers[this.index];
     },
   },
+
   methods: {
+    async fetchJSON(url) {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Failed to fetch ${url}`);
+      return await res.json();
+    },
+
+    async loadInitialData() {
+      try {
+        const [questionsData, answersData, tableData] = await Promise.all([
+          this.fetchJSON('/api/questions'),
+          this.fetchJSON('/api/answers'),
+          this.fetchJSON('/api/table'),
+        ]);
+
+        this.questions = questionsData;
+        this.answers = answersData;
+        this.allRows = tableData.allRows || [];
+        this.allColumns = tableData.allColumns || [];
+
+      } catch (error) {
+        console.error('初期データ読み込み失敗:', error);
+      }
+    },
+
     async executeSQL() {
       try {
         const res = await fetch('/api/execute', {
@@ -32,38 +59,30 @@ createApp({
         });
 
         const data = await res.json();
-
         this.result = data.rows || [];
         this.columns = data.columns || [];
-        const isCorrect = arraysOfObjectsEqual(this.result, this.allRows);
-        console.log('isCorrect:', isCorrect);        
+
+        this.isCorrect = this.checkAnswerCorrectness();
+
       } catch (err) {
         alert('SQL実行エラー');
       }
     },
+
+    checkAnswerCorrectness() {
+      return arraysOfObjectsEqual(this.result, this.allRows);
+    },
+
     prevQuestion() {
       if (this.index > 0) this.index--;
     },
+
     nextQuestion() {
       if (this.index < this.questions.length - 1) this.index++;
     },
   },
-  async mounted() {
-    try {
-      const questionsRes = await fetch('/api/questions');
-      const questionsData = await questionsRes.json();
-      this.questions = questionsData;
 
-      const answersRes = await fetch('/api/answers');
-      const answersData = await answersRes.json();
-      this.answers = answersData;
-  
-      const tableRes = await fetch('/api/table');
-      const tableData = await tableRes.json();
-      this.allRows = tableData.allRows || [];
-      this.allColumns = tableData.allColumns || [];
-    } catch (error) {
-      console.error('Error loading data:', error);
-    }
+  async mounted() {
+    await this.loadInitialData();
   }
 }).mount('#app');
