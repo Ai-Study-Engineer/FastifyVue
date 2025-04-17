@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>SQLクイズ</title>
+    <script src="https://unpkg.com/vue@3"></script>
+  </head>
+  <body>
+    <div id="app">
+      <h1>SQLの問題</h1>
+      <ul>
+        <li v-for="q in questions" :key="q.id">
+          <strong>{{ q.title }}</strong><br />
+          <code>{{ q.query }}</code>
+        </li>
+      </ul>
+    </div>
+    <script src="./main.js"></script>
+  </body>
+</html>
