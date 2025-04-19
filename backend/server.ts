@@ -36,19 +36,25 @@ fastify.post('/api/execute', async (request, reply) => {
   });
 
 fastify.get('/api/table/:index', async (request, reply) => {
-try {
-    const { index } = request.params as { index: string };    
-    const DB = questionList[Number(index)].DB;
-    const query = `SELECT * FROM ${DB.toString()};`;
-    const stmt = DB.prepare(query);
-    const allRows = stmt.all() as Record<string, any>[];
+  try {
+      const { index } = request.params as { index: string };    
+      const DB = questionList[Number(index)].DB;
+      const query = `SELECT * FROM ${DB.toString()};`;
+      const stmt = DB.prepare(query);
+      const allRows = stmt.all() as Record<string, any>[];
 
-    const allColumns = allRows.length > 0 ? Object.keys(allRows[0]) : [];
+      const allColumns = allRows.length > 0 ? Object.keys(allRows[0]) : [];
 
-    return { allRows, allColumns };
-} catch (err) {
-    reply.status(400).send({ error: String(err) });
-}
+      return { allRows, allColumns };
+  } catch (err) {
+      reply.status(400).send({ error: String(err) });
+  }
+});
+
+fastify.post('/api/ask', async () => {
+  return {
+    aiAnswer: 'What is the capital of France?',
+  };
 });
 
 fastify.listen({ port: 3000 }, (err) => {

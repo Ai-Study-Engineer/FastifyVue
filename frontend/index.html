@@ -35,6 +35,8 @@
         <textarea v-model="sql" rows="5" cols="60" placeholder="ここにSQLを入力"></textarea>
         <br />
         <button @click="executeSQL">実行</button>
+        <button @click="askAI">AI添削</button>
+        <p>{{aiAnswer}}</p>
 
         <div v-if="result.length">
             <h3>結果</h3>
@@ -52,7 +54,6 @@
             </table>
         </div>
         <div>
-            <button @click="checkAnswerCorrectness">正解かどうか</button>
             <p v-if="isCorrect === null">まだ解答していません</p>
             <div v-else>
                 <p>解答例</p>

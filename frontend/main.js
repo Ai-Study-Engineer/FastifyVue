@@ -12,6 +12,7 @@ createApp({
     const allColumns = ref([]);
     const index = ref(0);
     const isCorrect = ref(null);
+    const aiAnswer = ref('');
 
     const currentQuestion = computed(() => questions.value[index.value]);
     const currentAnswer = computed(() => answers.value[index.value]);
@@ -67,6 +68,21 @@ createApp({
       }
     }
 
+    async function askAI() {  
+      try{
+        const res = await fetch('/api/ask', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: sql.value, index: index.value }),
+        });
+        const data = await res.json();
+        aiAnswer.value = data.aiAnswer || 'AIからの回答がありません。';
+      }
+      catch (err) {
+        alert('AIへの問い合わせエラー');
+      }
+    }
+
     function checkAnswerCorrectness() {
       isCorrect.value = arraysOfObjectsEqual(resultRows.value, answers.value[index.value]?.rows);
     }
@@ -102,12 +118,14 @@ createApp({
       currentQuestion,
       currentAnswer,
       currentDb,
+      aiAnswer,
       fetchJSON,
       loadInitialData,
       executeSQL,
       prevQuestion,
       nextQuestion,
       checkAnswerCorrectness,
+      askAI,      
     };
   },
 }).mount('#app');
