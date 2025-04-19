@@ -3,7 +3,7 @@ import path from 'path';
 import fastifyStatic from '@fastify/static';
 import { questionList } from './sqlQuestions';
 import { answerList } from './sqlAnswers';
-import { userDB, productsDB } from './utils/db';
+import { usersDB, productsDB } from './utils/db';
 
 const fastify = Fastify({ logger: true });
 
@@ -22,8 +22,9 @@ fastify.get('/api/answers', async () => {
 
 fastify.post('/api/execute', async (request, reply) => {
     try {
-      const { query } = request.body as { query: string };
-      const stmt = productsDB.prepare(query);
+      const { query, index } = request.body as { query: string, index: string };
+      const DB = questionList[Number(index)].DB;    
+      const stmt = DB.prepare(query);
       const rows = stmt.all() as Record<string, any>[];
   
       const columns = rows.length > 0 ? Object.keys(rows[0]) : [];
@@ -34,11 +35,12 @@ fastify.post('/api/execute', async (request, reply) => {
     }
   });
 
-fastify.get('/api/table/:DB', async (request, reply) => {
+fastify.get('/api/table/:index', async (request, reply) => {
 try {
-    const { DB } = request.params as { DB: string };    
-    const query = `SELECT * FROM ${DB};`;
-    const stmt = productsDB.prepare(query);
+    const { index } = request.params as { index: string };    
+    const DB = questionList[Number(index)].DB;
+    const query = `SELECT * FROM ${DB.toString()};`;
+    const stmt = DB.prepare(query);
     const allRows = stmt.all() as Record<string, any>[];
 
     const allColumns = allRows.length > 0 ? Object.keys(allRows[0]) : [];

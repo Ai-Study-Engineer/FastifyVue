@@ -18,6 +18,7 @@
         <button @click="nextQuestion" :disabled="index === questions.length - 1">次へ</button>
         <div>
             <h3>元テーブル</h3>
+            <p>テーブル名: {{ currentDb }}</p>
             <table border="1">
                 <thead>
                     <tr>

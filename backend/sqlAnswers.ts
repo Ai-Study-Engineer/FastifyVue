@@ -20,7 +20,7 @@ export const answerList = [
   },
   {
     id: 3,
-    query: "SELECT name FROM products;",
+    query: "SELECT id, name FROM products;",
     columns: ["id", "name"],
     rows: [
       { id: 1, name: "Product A"},

@@ -136,4 +136,6 @@ dist
 .pnp.*
 sample.db
 products.db
-products.db
+*.db
+
+maikuma.md

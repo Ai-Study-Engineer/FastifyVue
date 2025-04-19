@@ -13,7 +13,7 @@ createApp({
       allColumns: [],
       index: 0,
       isCorrect: null,
-      DB: "products",
+      DB: "usersDB"
     };
   },
 
@@ -24,6 +24,9 @@ createApp({
     currentAnswer() {
       return this.answers[this.index];
     },
+    currentDb() {
+      return this.questions[this.index]?.DBNAME;
+    }
   },
 
   methods: {
@@ -38,7 +41,7 @@ createApp({
         const [questionsData, answersData, tableData] = await Promise.all([
           this.fetchJSON('/api/questions'),
           this.fetchJSON('/api/answers'),
-          this.fetchJSON(`/api/table/${this.DB}`),
+          this.fetchJSON(`/api/table/${this.index}`),
         ]);
 
         this.questions = questionsData;
@@ -56,7 +59,7 @@ createApp({
         const res = await fetch('/api/execute', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query: this.sql }),
+          body: JSON.stringify({ query: this.sql, index: this.index }),
         });
 
         const data = await res.json();
@@ -69,7 +72,7 @@ createApp({
     },
 
     checkAnswerCorrectness() {
-      this.isCorrect = arraysOfObjectsEqual(this.result, this.allRows);
+      this.isCorrect = arraysOfObjectsEqual(this.result, this.answers[this.index]?.rows);
     },
 
     prevQuestion() {
