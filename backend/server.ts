@@ -57,6 +57,11 @@ const apiKey = process.env.OPENAI_API_KEY;
 
 fastify.post('/api/ask', async (request, reply) => {
   try {
+    const { query, index } = request.body as { query: string, index: string };
+    const problem = questionList[Number(index)].title;
+    const DB = questionList[Number(index)].DB;
+    const allRows = DB.prepare(`SELECT * FROM ${DB.toString()};`).all() as Record<string, any>[];
+    const allColumns = allRows.length > 0 ? Object.keys(allRows[0]) : [];
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -66,7 +71,18 @@ fastify.post('/api/ask', async (request, reply) => {
       body: JSON.stringify({
         model: 'gpt-4',
         messages: [
-          { role: 'user', content: 'Write a one-sentence bedtime story about a unicorn.' }
+          { role: 'user',
+            content: `
+            あなたはSQL教師です。
+            SQLクエリと問題文が与えられます。
+            あなたの役割は、そのSQLクエリが正しく、問題文を解決できるかどうかを確認することです。
+            問題文: ${problem}
+            データベース名: ${DB.toString()}
+            データベースの行データ: ${JSON.stringify(allRows)}
+            データベースの列情報: ${JSON.stringify(allColumns)}
+            SQLクエリ: ${query}
+            `
+            }
         ]
       })
     })

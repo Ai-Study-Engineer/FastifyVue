@@ -20,12 +20,12 @@ export const answerList = [
   },
   {
     id: 3,
-    query: "SELECT id, name FROM products;",
-    columns: ["id", "name"],
+    query: "SELECT name FROM products;",
+    columns: ["name"],
     rows: [
-      { id: 1, name: "Product A"},
-      { id: 2, name: "Product B"},
-      { id: 3, name: "Product C"}
+      {name: "Product A"},
+      {name: "Product B"},
+      {name: "Product C"}
     ]
   }
 ];
