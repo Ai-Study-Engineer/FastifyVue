@@ -4,6 +4,7 @@ import fastifyStatic from '@fastify/static';
 import { questionList } from './sqlQuestions';
 import { answerList } from './sqlAnswers';
 import { usersDB, productsDB } from './utils/db';
+import dotenv   from 'dotenv'
 
 const fastify = Fastify({ logger: true });
 
@@ -51,11 +52,39 @@ fastify.get('/api/table/:index', async (request, reply) => {
   }
 });
 
-fastify.post('/api/ask', async () => {
-  return {
-    aiAnswer: 'What is the capital of France?',
-  };
-});
+dotenv.config()
+const apiKey = process.env.OPENAI_API_KEY;
+
+fastify.post('/api/ask', async (request, reply) => {
+  try {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'gpt-4',
+        messages: [
+          { role: 'user', content: 'Write a one-sentence bedtime story about a unicorn.' }
+        ]
+      })
+    })
+
+    if (!res.ok) {
+      const errText = await res.text()
+      console.error('OpenAI API error:', errText)
+      return reply.status(500).send({ error: 'OpenAI API request failed' })
+    }
+
+    const data = await res.json()
+    const aiAnswer = data.choices[0].message.content.trim()
+    return reply.send({ aiAnswer: aiAnswer })
+  } catch (err) {
+    console.error('Error:', err)
+    return reply.status(500).send({ error: 'Internal server error' })
+  }
+})
 
 fastify.listen({ port: 3000 }, (err) => {
   if (err) throw err;
