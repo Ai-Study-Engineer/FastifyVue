@@ -2,6 +2,7 @@ const { createApp, ref, computed, onMounted, watch } = Vue;
 import { arraysOfObjectsEqual, fetchJSON } from './utils/helpers.js';
 import {index} from './index.js';
 import {loadTableData, loadQuestionsAndAnswers } from './load.js';
+import {openai} from './openai.js';
 
 createApp({
   setup() {
@@ -36,18 +37,8 @@ createApp({
     }
 
     async function askAI() {  
-      try{
-        const res = await fetch('/api/ask', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query: sql.value, index: index.value }),
-        });
-        const data = await res.json();
-        aiAnswer.value = data.aiAnswer || 'AIからの回答がありません。';
-      }
-      catch (err) {
-        alert('AIへの問い合わせエラー');
-      }
+      const data = await openai(sql.value, index.value);
+      aiAnswer.value = data.aiAnswer || 'AIからの回答がありません。';
     }
 
     function checkAnswerCorrectness() {
