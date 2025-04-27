@@ -54,7 +54,11 @@ createApp({
     }
 
     watch(index, async (newIndex) => {
-      const tableData = await loadTableData(newIndex);        
+      await loadAndSetTableData(newIndex);        
+    });
+
+    async function loadAndSetTableData(idx) {
+      const tableData = await loadTableData(idx);        
       allRows.value = tableData.allRows || [];
       allColumns.value = tableData.allColumns || [];
       
@@ -62,20 +66,14 @@ createApp({
       resultRows.value = [];
       resultColumns.value = [];
       isCorrect.value = null;
-    });
+    }
 
     async function load(){
-      try {
-        const [qData, aData] = await loadQuestionsAndAnswers();
-        questions.value = qData;
-        answers.value = aData;
+      const [qData, aData] = await loadQuestionsAndAnswers();
+      questions.value = qData;
+      answers.value = aData;
 
-        const tableData = await loadTableData(index.value);        
-        allRows.value = tableData.allRows || [];
-        allColumns.value = tableData.allColumns || [];
-        } catch (error) {
-        console.error('初期データ読み込み失敗:', error);
-        }
+      await loadAndSetTableData(index.value);        
     }
 
     onMounted(load);
