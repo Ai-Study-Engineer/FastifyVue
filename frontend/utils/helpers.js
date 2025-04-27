@@ -16,3 +16,9 @@ export function arraysOfObjectsEqual(a, b) {
 
     return normalizedA.every((val, i) => val === normalizedB[i]);
 }
+
+export async function fetchJSON(url) {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Failed to fetch ${url}`);
+    return await res.json();
+  }

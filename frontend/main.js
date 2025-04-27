@@ -1,5 +1,7 @@
 const { createApp, ref, computed, onMounted, watch } = Vue;
-import { arraysOfObjectsEqual } from './utils/helpers.js';
+import { arraysOfObjectsEqual, fetchJSON } from './utils/helpers.js';
+import {index} from './index.js';
+import {loadTableData, loadQuestionsAndAnswers } from './load.js';
 
 createApp({
   setup() {
@@ -10,48 +12,13 @@ createApp({
     const resultColumns = ref([]);
     const allRows = ref([]);
     const allColumns = ref([]);
-    const index = ref(0);
     const isCorrect = ref(null);
     const aiAnswer = ref('');
 
     const currentQuestion = computed(() => questions.value[index.value]);
     const currentAnswer = computed(() => answers.value[index.value]);
     const currentDb = computed(() => currentQuestion.value?.DBNAME);
-
-    async function fetchJSON(url) {
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`Failed to fetch ${url}`);
-      return await res.json();
-    }
-
-    async function loadQuestionsAndAnswers() {
-      const [qData, aData] = await Promise.all([
-        fetchJSON('/api/questions'),
-        fetchJSON('/api/answers'),
-      ]);
-      questions.value = qData;
-      answers.value = aData;
-    }
-
-    async function loadTableData(idx) {
-      try {
-        const tableData = await fetchJSON(`/api/table/${idx}`);
-        allRows.value = tableData.allRows || [];
-        allColumns.value = tableData.allColumns || [];
-      } catch (error) {
-        console.error('テーブルデータ読み込み失敗:', error);
-      }
-    }
-
-    async function loadInitialData() {
-      try {
-        await loadQuestionsAndAnswers();
-        await loadTableData(index.value);
-      } catch (error) {
-        console.error('初期データ読み込み失敗:', error);
-      }
-    }
-
+    
     async function executeSQL() {
       try {
         const res = await fetch('/api/execute', {
@@ -96,14 +63,31 @@ createApp({
     }
 
     watch(index, async (newIndex) => {
-      await loadTableData(newIndex);
+      const tableData = await loadTableData(newIndex);        
+      allRows.value = tableData.allRows || [];
+      allColumns.value = tableData.allColumns || [];
+      
       sql.value = '';
       resultRows.value = [];
       resultColumns.value = [];
       isCorrect.value = null;
     });
 
-    onMounted(loadInitialData);
+    async function load(){
+      try {
+        const [qData, aData] = await loadQuestionsAndAnswers();
+        questions.value = qData;
+        answers.value = aData;
+
+        const tableData = await loadTableData(index.value);        
+        allRows.value = tableData.allRows || [];
+        allColumns.value = tableData.allColumns || [];
+        } catch (error) {
+        console.error('初期データ読み込み失敗:', error);
+        }
+    }
+
+    onMounted(load);
 
     return {
       questions,
@@ -120,12 +104,14 @@ createApp({
       currentDb,
       aiAnswer,
       fetchJSON,
-      loadInitialData,
       executeSQL,
       prevQuestion,
       nextQuestion,
       checkAnswerCorrectness,
       askAI,      
+      loadTableData,
+      loadQuestionsAndAnswers,
+      load,
     };
   },
 }).mount('#app');
